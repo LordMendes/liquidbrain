@@ -1,0 +1,26 @@
+{
+  "name": "liquidbrain",
+  "version": "0.1.0",
+  "description": "A library for autocomplete suggestions with LiquidBrainEngine and LiquidBrainUI.",
+  "main": "dist/liquidbrain.umd.js",
+  "module": "dist/liquidbrain.esm.js",
+  "types": "dist/index.d.ts",
+  "author": "Lucas C. Mendes",
+  "scripts": {
+    "build": "rollup -c rollup.config.cjs"
+  },
+  "keywords": [
+    "autocomplete",
+    "framework-agnostic",
+    "library",
+    "liquid",
+    "template"
+  ],
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "rollup": "^4.24.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.6.3"
+  }
+}
