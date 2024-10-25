@@ -337,7 +337,7 @@ Contributions are welcome! Please open an issue or submit a pull request on [Git
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/liquidbrain.git
+   git clone https://github.com/LordMendes/liquidbrain.git
    ```
 
 2. **Install Dependencies**
@@ -369,15 +369,10 @@ This project is licensed under the MIT License.
 
 ## Contact
 
-For questions or support, please open an issue on [GitHub](#) or contact [your-email@example.com](mailto:your-email@example.com).
+For questions or support, please open an issue on [GitHub](https://github.com/LordMendes/liquidbrain/issues)
 
 ---
 
 ## Acknowledgments
 
 - Inspired by the need for a simple, flexible autocomplete solution.
-- Thanks to all contributors and users who have provided feedback.
-
----
-
-**Note:** Replace placeholders like `yourusername`, `your-email@example.com`, and GitHub links with your actual information.
