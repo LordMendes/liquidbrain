@@ -8,9 +8,6 @@ module.exports = {
       format: 'umd',
       name: 'LiquidBrain',
       sourcemap: true,
-      globals: {
-        // Map external dependencies if any
-      },
     },
     {
       file: 'dist/liquidbrain.esm.js',
@@ -20,7 +17,8 @@ module.exports = {
   ],
   plugins: [
     typescript({
-      useTsconfigDeclarationDir: true,
+      verbosity: 3, 
+      clean: true,  
     }),
   ],
 };

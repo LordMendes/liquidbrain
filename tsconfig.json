@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES5",                        // Target ES5 for wider compatibility
-    "module": "ES6",                        // Use ES6 module system
-    "declaration": true,                    // Generate .d.ts files
-    "outDir": "./dist",                     // Output directory
-    "rootDir": "./src",                     // Root directory of input files
-    "strict": true,                         // Enable strict type-checking
-    "esModuleInterop": true,                // Enable interoperability between CommonJS and ES Modules
-    "moduleResolution": "node",             // Resolve modules like Node.js
-    "lib": ["DOM", "ES5", "ES2015.Promise"] // Include necessary libraries
+    "target": "ES5",
+    "module": "ES6",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "lib": ["DOM", "ES5", "ES2015.Promise"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

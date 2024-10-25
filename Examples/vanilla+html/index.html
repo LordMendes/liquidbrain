@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LiquidBrain Vanilla JS Example</title>
+  <!-- Include the CSS for LiquidBrain -->
+  <link rel="stylesheet" href="../liquid-brain/src/liquidbrain.css">
+  <style>
+    /* Additional styles for the example */
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    input, textarea, div[contenteditable] {
+      width: 100%;
+      max-width: 600px;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .contenteditable {
+      border: 1px solid #ccc;
+      min-height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1>LiquidBrain Vanilla JS Example</h1>
+
+  <h2>Input Element</h2>
+  <input type="text" id="myInput" placeholder="Type here...">
+
+  <h2>Textarea Element</h2>
+  <textarea id="myTextarea" placeholder="Type here..."></textarea>
+
+  <h2>ContentEditable Element</h2>
+  <div id="editable" contenteditable="true" class="contenteditable" placeholder="Type here..."></div>
+
+  <!-- Include the LiquidBrain UMD script -->
+  <script src="../liquidbrain/dist/liquidbrain.umd.js"></script>
+  <script>
+    // Access the exported classes from LiquidBrain
+    const { LiquidBrainUI } = LiquidBrain;
+
+    // Define your model
+    const model = {
+      user: {
+        name: 'John Doe',
+        email: 'john@example.com',
+        address: {
+          street: '123 Main St',
+          city: 'Anytown',
+          country: 'USA'
+        }
+      },
+      date: '2023-10-10',
+      company: {
+        name: 'Example Corp',
+        industry: 'Technology'
+      }
+    };
+
+    // Initialize LiquidBrain for the input element
+    const inputElement = document.getElementById('myInput');
+    const inputUI = new LiquidBrainUI({
+      model,
+      inputElement,
+      markers: { start: '{{', end: '}}' }
+    });
+
+    // Initialize LiquidBrain for the textarea element
+    const textareaElement = document.getElementById('myTextarea');
+    const textareaUI = new LiquidBrainUI({
+      model,
+      inputElement: textareaElement,
+      markers: { start: '{{', end: '}}' }
+    });
+
+    // Initialize LiquidBrain for the contenteditable element
+    const editableElement = document.getElementById('editable');
+    const editableUI = new LiquidBrainUI({
+      model,
+      inputElement: editableElement,
+      markers: { start: '{{', end: '}}' }
+    });
+  </script>
+</body>
+</html>
