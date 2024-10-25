@@ -13,7 +13,7 @@ module.exports = {
       file: 'dist/liquidbrain.esm.js',
       format: 'esm',
       sourcemap: true,
-    },
+    }
   ],
   plugins: [
     typescript({

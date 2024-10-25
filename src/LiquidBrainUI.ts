@@ -1,5 +1,6 @@
-import { LiquidBrainEngine } from './LiquidBrainEngine';
-import { Suggestion, Model } from './types';
+import { LiquidBrainEngine } from "./LiquidBrainEngine";
+import { Suggestion, Model } from "./types";
+import { styles } from "./defaultStyles";
 
 interface LiquidBrainUIOptions {
   model: Model;
@@ -29,11 +30,12 @@ export class LiquidBrainUI {
   private isContentEditable: boolean;
   private isInputElement: boolean;
   private isTextareaElement: boolean;
+  private static stylesInjected = false;
 
   constructor(options: LiquidBrainUIOptions) {
     this.inputElement = options.inputElement;
     this.customRenderer = options.customRenderer;
-    this.markers = options.markers || { start: '{{', end: '}}' };
+    this.markers = options.markers || { start: "{{", end: "}}" };
     this.suggestions = [];
     this.selectedIndex = -1;
 
@@ -60,11 +62,15 @@ export class LiquidBrainUI {
       this.markers
     );
 
+    if (!options.customRenderer) {
+      this.injectStyles();
+    }
+
     // Create modal container
-    this.modalElement = document.createElement('div');
-    this.modalElement.style.position = 'absolute';
-    this.modalElement.style.zIndex = '1000';
-    this.modalElement.classList.add('liquidbrain-modal');
+    this.modalElement = document.createElement("div");
+    this.modalElement.style.position = "absolute";
+    this.modalElement.style.zIndex = "1000";
+    this.modalElement.classList.add("liquidbrain-modal");
     document.body.appendChild(this.modalElement);
 
     this.init();
@@ -72,11 +78,28 @@ export class LiquidBrainUI {
 
   private init() {
     // Bind event listeners
-    this.inputElement.addEventListener('input', this.handleInput);
-    this.inputElement.addEventListener('keydown', this.handleKeyDown);
-    this.inputElement.addEventListener('click', this.handleCaretPosition);
-    this.inputElement.addEventListener('keyup', this.handleCaretPosition);
-    document.addEventListener('click', this.handleDocumentClick);
+    this.inputElement.addEventListener("input", this.handleInput);
+    this.inputElement.addEventListener("keydown", this.handleKeyDown);
+    this.inputElement.addEventListener("click", this.handleCaretPosition);
+    this.inputElement.addEventListener("keyup", this.handleCaretPosition);
+    document.addEventListener("click", this.handleDocumentClick);
+  }
+
+  private injectStyles() {
+    if (LiquidBrainUI.stylesInjected) {
+      return; // Styles already injected
+    }
+
+    // Create a <style> element
+    const styleElement = document.createElement("style");
+    styleElement.type = "text/css";
+    styleElement.textContent = styles;
+
+    // Append the style to the <head>
+    document.head.appendChild(styleElement);
+
+    // Set the flag to true
+    LiquidBrainUI.stylesInjected = true;
   }
 
   private handleInput = () => {
@@ -87,7 +110,9 @@ export class LiquidBrainUI {
     const lastChar = value[cursorPosition - 1];
     if (lastChar === this.markers.start[0]) {
       const newValue =
-        value.slice(0, cursorPosition) + this.markers.end[0] + value.slice(cursorPosition);
+        value.slice(0, cursorPosition) +
+        this.markers.end[0] +
+        value.slice(cursorPosition);
       this.setValue(newValue);
       this.setCaretPosition(cursorPosition);
     }
@@ -107,19 +132,24 @@ export class LiquidBrainUI {
     if (this.suggestions.length === 0) return;
 
     switch (event.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         event.preventDefault();
         this.selectedIndex = (this.selectedIndex + 1) % this.suggestions.length;
         this.updateModal();
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         event.preventDefault();
-        this.selectedIndex = (this.selectedIndex - 1 + this.suggestions.length) % this.suggestions.length;
+        this.selectedIndex =
+          (this.selectedIndex - 1 + this.suggestions.length) %
+          this.suggestions.length;
         this.updateModal();
         break;
-      case 'Enter':
+      case "Enter":
         event.preventDefault();
-        if (this.selectedIndex >= 0 && this.selectedIndex < this.suggestions.length) {
+        if (
+          this.selectedIndex >= 0 &&
+          this.selectedIndex < this.suggestions.length
+        ) {
           this.applySuggestion(this.suggestions[this.selectedIndex]);
         }
         break;
@@ -165,47 +195,54 @@ export class LiquidBrainUI {
     this.modalElement.style.top = `${caretPosition.top + 20}px`;
 
     this.updateModal();
-    this.modalElement.style.display = 'block';
+    this.modalElement.style.display = "block";
   }
 
   private hideModal() {
-    this.modalElement.style.display = 'none';
+    this.modalElement.style.display = "none";
     this.selectedIndex = -1;
   }
 
   private updateModal() {
     // Clear existing content
-    this.modalElement.innerHTML = '';
+    this.modalElement.innerHTML = "";
 
     // Use custom renderer if provided
     if (this.customRenderer) {
-      this.customRenderer(this.modalElement, this.suggestions, this.selectedIndex, this.applySuggestion);
+      this.customRenderer(
+        this.modalElement,
+        this.suggestions,
+        this.selectedIndex,
+        this.applySuggestion
+      );
       return;
     }
 
     // Default rendering with Material UI styling
-    const listElement = document.createElement('ul');
-    listElement.classList.add('liquidbrain-suggestion-list');
+    const listElement = document.createElement("ul");
+    listElement.classList.add("liquidbrain-suggestion-list");
 
     this.suggestions.forEach((suggestion, index) => {
-      const listItem = document.createElement('li');
-      listItem.classList.add('liquidbrain-suggestion-item');
+      const listItem = document.createElement("li");
+      listItem.classList.add("liquidbrain-suggestion-item");
       if (index === this.selectedIndex) {
-        listItem.classList.add('selected');
+        listItem.classList.add("selected");
       }
 
-      const primaryText = document.createElement('div');
-      primaryText.classList.add('primary-text');
+      const primaryText = document.createElement("div");
+      primaryText.classList.add("primary-text");
       primaryText.textContent = suggestion.template;
 
-      const secondaryText = document.createElement('div');
-      secondaryText.classList.add('secondary-text');
+      const secondaryText = document.createElement("div");
+      secondaryText.classList.add("secondary-text");
       secondaryText.textContent = suggestion.preview;
 
       listItem.appendChild(primaryText);
       listItem.appendChild(secondaryText);
 
-      listItem.addEventListener('click', () => this.applySuggestion(suggestion));
+      listItem.addEventListener("click", () =>
+        this.applySuggestion(suggestion)
+      );
 
       listElement.appendChild(listItem);
     });
@@ -217,7 +254,11 @@ export class LiquidBrainUI {
     const value = this.getValue();
     const cursorPosition = this.getCaretPosition();
 
-    const { newValue, newCursor } = this.engine.insertSuggestion(suggestion, value, cursorPosition);
+    const { newValue, newCursor } = this.engine.insertSuggestion(
+      suggestion,
+      value,
+      cursorPosition
+    );
     this.setValue(newValue);
 
     // Move cursor to the new cursor position
@@ -235,11 +276,12 @@ export class LiquidBrainUI {
 
   private getValue(): string {
     if (this.isContentEditable) {
-      return this.inputElement.textContent || '';
+      return this.inputElement.textContent || "";
     } else if (this.isInputElement || this.isTextareaElement) {
-      return (this.inputElement as HTMLInputElement | HTMLTextAreaElement).value;
+      return (this.inputElement as HTMLInputElement | HTMLTextAreaElement)
+        .value;
     } else {
-      return '';
+      return "";
     }
   }
 
@@ -247,7 +289,8 @@ export class LiquidBrainUI {
     if (this.isContentEditable) {
       this.inputElement.textContent = newValue;
     } else if (this.isInputElement || this.isTextareaElement) {
-      (this.inputElement as HTMLInputElement | HTMLTextAreaElement).value = newValue;
+      (this.inputElement as HTMLInputElement | HTMLTextAreaElement).value =
+        newValue;
     }
   }
 
@@ -265,7 +308,10 @@ export class LiquidBrainUI {
       position = preCaretRange.toString().length;
       return position;
     } else if (this.isInputElement || this.isTextareaElement) {
-      return (this.inputElement as HTMLInputElement | HTMLTextAreaElement).selectionStart || 0;
+      return (
+        (this.inputElement as HTMLInputElement | HTMLTextAreaElement)
+          .selectionStart || 0
+      );
     }
     return 0;
   }
@@ -299,7 +345,8 @@ export class LiquidBrainUI {
           for (let i = 0; i < node.childNodes.length; i++) {
             const found = setPosition(node.childNodes[i], charsLeft);
             if (found) return true;
-            charsLeft = charsLeft - (node.childNodes[i].textContent?.length || 0);
+            charsLeft =
+              charsLeft - (node.childNodes[i].textContent?.length || 0);
           }
         }
         return false;
@@ -307,8 +354,12 @@ export class LiquidBrainUI {
 
       setPosition(this.inputElement, position);
     } else if (this.isInputElement || this.isTextareaElement) {
-      (this.inputElement as HTMLInputElement | HTMLTextAreaElement).selectionStart = position;
-      (this.inputElement as HTMLInputElement | HTMLTextAreaElement).selectionEnd = position;
+      (
+        this.inputElement as HTMLInputElement | HTMLTextAreaElement
+      ).selectionStart = position;
+      (
+        this.inputElement as HTMLInputElement | HTMLTextAreaElement
+      ).selectionEnd = position;
     }
   }
 
@@ -323,64 +374,103 @@ export class LiquidBrainUI {
 
       const rect = range.getClientRects()[0];
       if (rect) {
-        return { left: rect.left + window.pageXOffset, top: rect.top + window.pageYOffset };
+        return {
+          left: rect.left + window.pageXOffset,
+          top: rect.top + window.pageYOffset,
+        };
       }
 
       // Fallback to element position
       const elementRect = this.inputElement.getBoundingClientRect();
-      return { left: elementRect.left + window.pageXOffset, top: elementRect.top + window.pageYOffset };
+      return {
+        left: elementRect.left + window.pageXOffset,
+        top: elementRect.top + window.pageYOffset,
+      };
     } else if (this.isInputElement || this.isTextareaElement) {
-      const element = this.inputElement as HTMLInputElement | HTMLTextAreaElement;
+      const element = this.inputElement as
+        | HTMLInputElement
+        | HTMLTextAreaElement;
       const { selectionStart } = element;
       if (selectionStart === null) {
         return { left: 0, top: 0 };
       }
 
-      const coordinates = this.getCaretCoordinatesForInput(element, selectionStart);
+      const coordinates = this.getCaretCoordinatesForInput(
+        element,
+        selectionStart
+      );
 
       return { left: coordinates.left, top: coordinates.top };
     } else {
       // Fallback to element position
       const elementRect = this.inputElement.getBoundingClientRect();
-      return { left: elementRect.left + window.pageXOffset, top: elementRect.top + window.pageYOffset };
+      return {
+        left: elementRect.left + window.pageXOffset,
+        top: elementRect.top + window.pageYOffset,
+      };
     }
   }
 
-  private getCaretCoordinatesForInput(element: HTMLInputElement | HTMLTextAreaElement, position: number): { left: number; top: number } {
-    const div = document.createElement('div');
-    div.style.position = 'absolute';
-    div.style.whiteSpace = 'pre-wrap';
-    div.style.visibility = 'hidden';
+  private getCaretCoordinatesForInput(
+    element: HTMLInputElement | HTMLTextAreaElement,
+    position: number
+  ): { left: number; top: number } {
+    const div = document.createElement("div");
+    div.style.position = "absolute";
+    div.style.whiteSpace = "pre-wrap";
+    div.style.visibility = "hidden";
 
     // Copy styles from the input
     const computed = window.getComputedStyle(element);
     const properties = [
-      'direction', 'boxSizing', 'width', 'height', 'overflowX', 'overflowY',
-      'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth',
-      'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
-      'fontStyle', 'fontVariant', 'fontWeight', 'fontStretch', 'fontSize',
-      'fontSizeAdjust', 'lineHeight', 'fontFamily', 'textAlign', 'textTransform',
-      'textIndent', 'textDecoration', 'letterSpacing', 'wordSpacing'
+      "direction",
+      "boxSizing",
+      "width",
+      "height",
+      "overflowX",
+      "overflowY",
+      "borderTopWidth",
+      "borderRightWidth",
+      "borderBottomWidth",
+      "borderLeftWidth",
+      "paddingTop",
+      "paddingRight",
+      "paddingBottom",
+      "paddingLeft",
+      "fontStyle",
+      "fontVariant",
+      "fontWeight",
+      "fontStretch",
+      "fontSize",
+      "fontSizeAdjust",
+      "lineHeight",
+      "fontFamily",
+      "textAlign",
+      "textTransform",
+      "textIndent",
+      "textDecoration",
+      "letterSpacing",
+      "wordSpacing",
     ];
 
-    properties.forEach(prop => {
-      if (prop !== 'length' && prop !== 'parentRule') {
+    properties.forEach((prop) => {
+      if (prop !== "length" && prop !== "parentRule") {
         div.style.setProperty(prop, computed.getPropertyValue(prop));
       }
     });
 
     // Offset the mirror div
     const rect = element.getBoundingClientRect();
-    div.style.left = rect.left + window.pageXOffset + 'px';
-    div.style.top = rect.top + window.pageYOffset + 'px';
+    div.style.left = rect.left + window.pageXOffset + "px";
+    div.style.top = rect.top + window.pageYOffset + "px";
 
     // Set the content of the div
     const value = element.value.substring(0, position);
     div.textContent = value;
 
     // Create a span to represent the caret position
-    const span = document.createElement('span');
-    span.textContent = element.value.substring(position) || '.';
+    const span = document.createElement("span");
+    span.textContent = element.value.substring(position) || ".";
     div.appendChild(span);
 
     document.body.appendChild(div);
@@ -395,11 +485,11 @@ export class LiquidBrainUI {
 
   public destroy() {
     // Clean up event listeners and DOM elements
-    this.inputElement.removeEventListener('input', this.handleInput);
-    this.inputElement.removeEventListener('keydown', this.handleKeyDown);
-    this.inputElement.removeEventListener('click', this.handleCaretPosition);
-    this.inputElement.removeEventListener('keyup', this.handleCaretPosition);
-    document.removeEventListener('click', this.handleDocumentClick);
+    this.inputElement.removeEventListener("input", this.handleInput);
+    this.inputElement.removeEventListener("keydown", this.handleKeyDown);
+    this.inputElement.removeEventListener("click", this.handleCaretPosition);
+    this.inputElement.removeEventListener("keyup", this.handleCaretPosition);
+    document.removeEventListener("click", this.handleDocumentClick);
     document.body.removeChild(this.modalElement);
   }
 }

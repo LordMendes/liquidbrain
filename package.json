@@ -1,6 +1,6 @@
 {
   "name": "liquidbrain",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "A library for autocomplete suggestions with LiquidBrainEngine and LiquidBrainUI.",
   "main": "dist/liquidbrain.umd.js",
   "module": "dist/liquidbrain.esm.js",
